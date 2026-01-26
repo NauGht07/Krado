@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="{{ url_for('static',filename='style.css') }}"
+        />
+
+        <meta charset="UTF-8" />
+        <title>Krado</title>
+        
+    </head>
+    <body>
+        <nav>
+            <div class="left">
+                <p>Krado</p>
+            </div>
+            <div class="right">
+                <button id="leader_button" class="nav-button">Leaderboard</button>
+                <button id="tut_button" class="nav-button">Tutorial</button>
+                <button id="login_button" class="nav-button">Log In</button>
+            </div>
+        </nav>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                {% for category, message in messages %}
+                    <li id="{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <div id="tut_screen" class="tut-screen">
+            <h1>Tutorial</h1>
+            <h2>Goal</h2>
+            <p>Win 3 small boards in a row (like classic Tic Tac Toe) on a big 3x3 grid of boards. Or win 5 small boards.</p>
+            <h2>How To Play</h2>
+            <p>1. The game has 9 small Tic Tac Toe boards arranged in a 3x3 grid.</p>
+            <p>2. Player X starts on any cell in any board.</p>
+            <p>3. The cell you play in decides which small board your opponent must play in next.</p>
+            <p>4. If the required board is full or won, your opponent can play anywhere.</p>
+        </div>
+        <audio hidden autoplay loop controls>
+            <source src="{{ url_for('static', filename='music.mp3') }}" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <div id="leader_screen" class="">
+            <div class="leader_item">
+                <p>#</p>
+                <p>Name</p>
+                <p>Wins</p>
+            </div>
+        </div>
+
+        <div class="grid-container">
+            {% include './grid.html'%}
+        </div>
+
+        <script>
+            tut_button = document.getElementById('tut_button');
+            tut_screen = document.getElementById('tut_screen');
+
+            login_button = document.getElementById('login_button');
+
+            leader_button = document.getElementById('leader_button')
+            leader_screen = document.getElementById('leader_screen')
+
+            document.getElementById("Start").classList.add('fade')
+
+            leader_button.addEventListener("click", function() {
+
+                leader_screen.classList.toggle("leader_screen_enabled")
+                leader_button.classList.toggle("nav-button-enabled")
+
+                fetch('/leaderboard', {
+                    method: "POST",
+                    headers: {'Content-Type': 'application/json'},
+                })
+                .then(res => res.json())
+                .then(data => {
+                    leader_screen.innerHTML = "<div class='leader_item'><p>#</p><p>Name</p><p>Wins</p></div>"
+                    createLeaderItem(data)
+                })
+            })
+
+            tut_button.addEventListener("click", function() {
+                tut_screen.classList.toggle("tut-screen-enabled")
+                tut_button.classList.toggle("nav-button-enabled")
+            })
+
+            login_button.addEventListener("click", function() {
+                window.location.href = '/login'
+            })
+
+            function createLeaderItem(data) {
+                for (var i = 0; i < data.result.length; i++) {
+                    const iDiv = document.createElement('div')
+                    iDiv.className = 'leader_item'
+
+                    const serial = document.createElement('p')
+                    serial.textContent = i + 1
+                    iDiv.appendChild(serial)
+
+                    const user = document.createElement('p')
+                    user.textContent = data.result[i][0]
+                    iDiv.appendChild(user)
+
+                    const wins = document.createElement('p')
+                    wins.textContent = data.result[i][1]
+                    iDiv.appendChild(wins)
+                    
+                    leader_screen.appendChild(iDiv)
+                }
+            }
+        </script>
+
+    </body>
+</html>

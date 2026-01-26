@@ -1,0 +1,294 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+    background: linear-gradient(to right, #7ecef1 0%, #7ecef1 50%, #f7a1b9 50%, #f7a1b9 100%);
+    font-family: "Raleway", sans-serif;
+    transition: background 0.5s ease-in-out;
+}
+
+body.oTurn {
+    background:none;
+    background-color: #f7a1b9;
+    -webkit-transition: all 0.5s ease-in-out;
+    transition: background 0.5s ease-in-out;
+}
+
+body.xTurn {
+    background: none;
+    background-color: #7ecef1;
+    -webkit-transition: all 0.5s ease-in-out;
+}
+
+.grid-background {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-0 -0 10 10'%3E%3Cpath d='M 0 1 L 10 1 M 1 0 L 1 10' stroke='%23ffffff' stroke-opacity='0.5' stroke-width='0.1' /%3E%3C/svg%3E"); 
+    background-size: 50px 50px;
+    width: 100%;
+    height: 100%;   
+    z-index: -99;
+}
+
+.login-logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+}
+
+nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-inline: 30px;
+    padding-block: 10px;
+    color: white;
+}
+
+nav .right {
+    display: flex;
+    flex-direction: row;
+}
+
+nav .right p {
+    padding-inline: 7px;
+}
+
+nav .left {
+    display: flex;
+    flex-direction: row;
+}
+
+nav .left p {
+    padding-inline: 7px;
+}
+
+.grid-container {
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(0, 15%);
+    display: flex;
+    justify-content: center;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.board.o .cell {
+    background-color: rgb(255, 198, 208);
+}
+
+.board.x .cell {
+    background-color: rgb(188, 217, 243);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    float: left;
+}
+
+.disabled {
+    pointer-events: none;
+}
+
+.disabled .cell {
+    background-color: rgba(255, 255, 255, 0.247);
+}
+
+.cell {
+    width: 70px;
+    height: 70px;
+    background-color: #EEEEEE;
+    border: none;
+    border-radius: 10px;
+    float: left;
+    margin: 1px
+}
+
+.cell:hover {
+    background-color: orange;
+    border: solid;
+    border-color: orange;
+}
+
+.rule {
+    width: 5px;
+    background-color: #00ADB5;
+}
+
+
+.login-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.input-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: row;    
+    margin-bottom: 50px;
+}
+
+.p1 {
+    display: flex;
+    flex-direction: column;
+}
+
+.p2 {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-form input {
+    width: 300px;
+    height: 50px;
+    margin-block: 10px;
+    border-radius: 50px;
+    padding: 30px;
+    border: none;
+}
+
+input[type="submit"] {
+    padding: 10px 20px; /* Balanced padding */
+    color: black;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 200px; /* Same width as the inputs */
+    margin-top: 20px; /* Space from other elements */
+    text-align: center; /* Ensure text is centered */
+    line-height: normal; /* Remove excessive vertical spacing */
+    display: inline-block; /* Ensure proper alignment */
+    vertical-align: middle; /* Align the text vertically */
+}
+
+input {
+    background-color: white;
+    box-shadow: 0 3px 5px #00000033;
+}
+
+input:hover {
+    background-color: white; /* Red color on hover */
+}
+
+.login-form h1 {
+    color: white;
+}
+
+.login-form p {
+    font-size: 15px;
+}
+
+.nav-button {
+    background-color: transparent;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    margin-inline: 5px;
+    padding-inline: 20px;
+}
+
+.nav-button:hover {
+    background-color: rgba(177, 177, 177, 0.466);
+}
+
+.nav-button-enabled {
+    background-color:rgba(255, 255, 255, 0.205);
+    border: solid 2px;
+    border-color: white;
+}
+
+.tut-screen {
+    display: none;
+    position: absolute;
+    width: 60%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 40px;
+    z-index: 999;
+
+    background-color: white;
+    box-shadow: 0 0 20px #00000033;
+    border-radius: 10px;
+}
+
+.tut-screen-enabled {
+    display: block;
+}
+
+#leader_screen {
+    display: none;
+    position: absolute;
+    width: 60%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 40px;
+
+    background-color: white;
+    box-shadow: 0 0 20px #00000033;
+    border-radius: 10px;
+
+    z-index: 998;
+}
+
+#leader_screen.leader_screen_enabled {
+    display: block;
+}
+
+#leader_screen .leader_item {
+    display: flex;
+    flex-direction: row;
+    justify-content:space-between;
+}
+
+#Start {
+    display: block;
+    text-align: center;
+    position: absolute;
+    width: 60%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 40px;
+
+    background-color: white;
+    box-shadow: 0 0 20px #00000033;
+    border-radius: 10px;
+
+    z-index: 998;
+}
+
+#Start.fade {
+    background-color: transparent;
+    box-shadow: none;
+    color: transparent;
+    z-index: -10;
+    -webkit-transition: all 3s ease-in-out;
+}
+
+#game-won {
+    display: block;
+    text-align: center;
+    position: absolute;
+    width: 80%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 40px;
+
+    background-color: white;
+    box-shadow: 0 0 20px #00000033;
+    border-radius: 10px;
+
+    z-index: 998;
+}
