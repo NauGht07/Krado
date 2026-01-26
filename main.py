@@ -3,8 +3,10 @@ from flask import Flask, render_template, request, redirect, jsonify, flash
 import csv
 import random
 from itertools import combinations
-app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+
+from app import create_app
+
+app = create_app()
 
 moves = []
 turn = "x"
@@ -14,7 +16,11 @@ players = {}
 logged = False
 
 def log_users(usr, pswd, turn):
-    f = open('users.csv', 'r+', newline='')
+    try:
+        f = open('./data/users.csv', 'r+', newline='')
+    except FileNotFoundError:
+        f = open('./data/users.csv', 'w+', newline = '')
+
     reader = csv.reader(f)
     writer = csv.writer(f)
     for i in reader:
@@ -32,59 +38,59 @@ def log_users(usr, pswd, turn):
             
 
 # Login Page
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-    global logged
-    global moves
-    global turn
-    global players
+# @app.route("/login", methods=['GET', 'POST'])
+# def login():
+#     global logged
+#     global moves
+#     global turn
+#     global players
 
-    moves = []
-    turn = "x"
-    players = {}
-    logged = False
+#     moves = []
+#     turn = "x"
+#     players = {}
+#     logged = False
 
-    creds = {}
+#     creds = {}
 
-    a, b = False, False
+#     a, b = False, False
 
-    if request.method == 'POST':
-        creds = request.form
+#     if request.method == 'POST':
+#         creds = request.form
 
-        if random.randint(0, 1) == 0:
-            aturn = 'x'
-            bturn = 'o'
-        else:
-            bturn = 'x'
-            aturn = 'o'
+#         if random.randint(0, 1) == 0:
+#             aturn = 'x'
+#             bturn = 'o'
+#         else:
+#             bturn = 'x'
+#             aturn = 'o'
         
-        if not bool(set(['']).intersection(creds.values())) and creds['user1'] != creds['user2']: # Checks if all fields were filled
-            a = log_users(creds['user1'], creds['password1'], aturn)
-            b = log_users(creds['user2'], creds['password2'], bturn)
+#         if not bool(set(['']).intersection(creds.values())) and creds['user1'] != creds['user2']: # Checks if all fields were filled
+#             a = log_users(creds['user1'], creds['password1'], aturn)
+#             b = log_users(creds['user2'], creds['password2'], bturn)
 
 
-    if not a or not b:
-        logged = False
-    else:
-        logged = True
+#     if not a or not b:
+#         logged = False
+#     else:
+#         logged = True
 
-    if logged:
-        return redirect('/')
-    else:
-        return render_template("login.html")
+#     if logged:
+#         return redirect('/')
+#     else:
+#         return render_template("login.html")
 
 
-@app.route("/")
-def main():
-    global logged
-    global moves
-    moves = []
-    # Redirects user to login page if not logged in
-    if logged:
-        flash(players['x'] + " Will Start! (X's)", 'Start')
-        return render_template("index.html")
-    else:
-        return redirect('/login')
+# @app.route("/")
+# def main():
+#     global logged
+#     global moves
+#     moves = []
+#     # Redirects user to login page if not logged in
+#     if logged:
+#         flash(players['x'] + " Will Start! (X's)", 'Start')
+#         return render_template("index.html")
+#     else:
+#         return redirect('/login')
 
 @app.route('/leaderboard', methods=['POST'])
 def leaderboard():
