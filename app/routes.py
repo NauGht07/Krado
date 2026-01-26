@@ -1,5 +1,6 @@
 from flask import Blueprint, flash, render_template, request, redirect, session
 from app.login import login_to_session
+from app.leaderboard import leaderboard_data
 
 main = Blueprint("main", __name__)
 
@@ -41,3 +42,6 @@ def login():
 
     return redirect('/')
 
+@main.route("/leaderboard", methods=['POST'])
+def leaderboard():
+    return leaderboard_data()
