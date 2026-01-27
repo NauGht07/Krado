@@ -45,12 +45,9 @@
         .then(data => {
 
             if (data.status === "game won") {
-                winSound.play();
-
-                setTimeout(() => {
-                    alert("GAME WON by " + data.winner);
-                    window.location.href = '/';
-                }, (winSound.duration || 2) * 1000);
+                console.log("game won")
+                alert("GAME WON by " + data.winner);
+                window.location.href = '/login'
 
                 return;
             }

@@ -1,18 +1,37 @@
-from flask import Flask, render_template, request, redirect, jsonify, flash
+from flask import session
 import csv
 from itertools import combinations
 
 moves = []
 win_patterns = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]]
 turn = 'x'
+winner = ""
+
+def handle_move(button_id, turn):
+    game_won = False
+    grid_won = False
+    moves.append(str(button_id + turn)) #adds moves to moves list
+
+    if (button_id[0] + 'o' in moves) or (button_id[0] + 'x' in moves): # Checks if the board is already won by a player
+        return {'status': 'already won'}
+
+    grid_won = grid_win_check(button_id, turn)
+
+    if grid_won:
+        moves.append(str(button_id[0] + turn))
+        game_won = game_win_check()
+    
+    if grid_won:
+        if game_won:
+            print(game_won)
+            print(winner)
+            return {'status': 'game won', 'winner': winner}
+        return {'status': 'board won', 'gridId': button_id[0], 'turn': turn}
+    else:
+        return{'status': 'board not won'}
 
 # Chekcs if a board has been won
 def grid_win_check(button_id, turn):
-    if (button_id + 'o' in moves) or (button_id + 'x' in moves): # Checks if the board is already won by a player
-        return {'status': 'already won'}
-
-    moves.append(str(button_id + turn))
-
     # Gets a sorted list of all moves in the given board and then compares it with all possible win patterns
     positions = []
     for i in moves:
@@ -22,22 +41,13 @@ def grid_win_check(button_id, turn):
             positions.append(int(i[1]))
     positions.sort()
 
-    if subset_present(positions, win_patterns):
-        moves.append(str(button_id[0] + turn))
-        print(button_id)
-        game_won = game_win_check()
-        if game_won != 'no':
-            return {'status': 'game won', 'winner': game_won}
-        else:
-            return {'status': 'board won', 'gridId': button_id[0], 'turn': turn}
+    if has_win_pattern(positions, win_patterns):
+        return True
     else:
-        return{'status': 'board not won'}
-
+        return False
 
 # Checks if the game has been won
 def game_win_check():
-    global players
-
     positionsx = []
     positionso = []
     for i in moves:
@@ -45,54 +55,42 @@ def game_win_check():
             positionsx.append(int(i[0]))
         elif i[1] == 'o':
             positionso.append(int(i[0]))
+
     positionsx.sort()
     positionso.sort()
 
-    if subset_present(positionsx, win_patterns) or (len(positionsx) >= 5): # Chekcs if game was won by majority or a strike
+    if has_win_pattern(positionsx, win_patterns) or (len(positionsx) >= 5): # Chekcs if game was won by majority or a strike
+        update_leaderboard('x')
+        return True
+    
+    if has_win_pattern(positionso, win_patterns) or (len(positionsx) >= 5): # Chekcs if game was won by majority or a strike
+        update_leaderboard('o')
+        return True
 
-        f = open('users.csv', 'r+', newline='')
-        reader = csv.reader(f)
-        writer = csv.writer(f)
-        l = []
-        for row in reader:
-            if row[0] == players['x']:
-                row[2] = int(row[2]) + 1
-            l.append(row)
-        f.close()
-
-        f = open('users.csv', 'w', newline='')
-        writer = csv.writer(f)
-        writer.writerows(l)
-        f.close()
-
-        return players['x']
-
-    if subset_present(positionso, win_patterns) or (len(positionso) >= 5): # Ches if game was won by majority or a strike
-        print("Game won by", players['o'])
-
-        l = []
-        f = open('users.csv', 'r', newline='')
-        reader = csv.reader(f)
-        for row in reader:
-            if row[0] == players['o']:
-                row[2] = int(row[2]) + 1
-            l.append(row)
-        f.close()
-
-        f = open('users.csv', 'w', newline='')
-        writer = csv.writer(f)
-        writer.writerows(l)
-        f.close()
-
-        return players['o']
-
-    return 'no'
-
-def subset_present(positions, win_patterns):
-    n = len(positions)
-    for r in range(1, n + 1):
-        for subset in combinations(positions, r):
-            for pattern in win_patterns:
-                if sorted(subset) == sorted(pattern):
-                    return True
     return False
+
+def has_win_pattern(positions, win_patterns):
+    return any(
+        all(p in positions for p in pattern)
+        for pattern in win_patterns
+    )
+
+def update_leaderboard(turn):
+        #determine winner
+        d = session['user1'] | session['user2']
+        global winner
+        winner = d[turn]
+
+
+        with open('data/users.csv', 'r+', newline='') as f: #handle updating wins
+            reader = csv.reader(f)
+            writer = csv.writer(f)
+            leaderboard = []
+            for row in reader:
+                if row[0] == winner:
+                    row[2] = int(row[2]) + 1
+                leaderboard.append(row)
+
+        with open('data/users.csv', 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerows(leaderboard)

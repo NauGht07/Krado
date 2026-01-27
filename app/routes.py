@@ -1,16 +1,12 @@
 from flask import Blueprint, flash, render_template, request, redirect, session, jsonify
 from app.login import login_to_session
 from app.leaderboard import leaderboard_data
-from app.game_state_checks import grid_win_check
+from app.game_state_checks import handle_move
 
 main = Blueprint("main", __name__)
 
 @main.route("/")
 def home():
-    global logged
-    global moves
-    moves = []
-
     try:
         session["logged_in"]
     except:
@@ -29,7 +25,6 @@ def home():
 @main.route("/login", methods=['GET', 'POST'])
 def login():
     session['logged_in'] = False
-    creds = {}
 
     if request.method == "GET":
         return render_template("login.html")
@@ -53,5 +48,5 @@ def clicked():
     button_id = data.get('button_id')
     turn = data.get('turn')
 
-    result = grid_win_check(button_id, turn)
+    result = handle_move(button_id, turn)
     return jsonify(result)

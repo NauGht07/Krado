@@ -1,11 +1,8 @@
-from flask import Flask, render_template, request, redirect, jsonify, flash, session
+from flask import request, session
 import csv
 import random
-from itertools import combinations
 
-logged = False
-
-def authenticate(usr, pswd, turn):
+def authenticate_or_register(usr, pswd, turn):
     try:
         f = open('./data/users.csv', 'r+', newline='')
     except FileNotFoundError:
@@ -14,8 +11,8 @@ def authenticate(usr, pswd, turn):
     reader = csv.reader(f)
     writer = csv.writer(f)
     for i in reader:
-        if usr in i:
-            if pswd in i: 
+        if usr == i[0]:
+            if pswd == i[0]: 
                 return True
             else: 
                 return False
@@ -27,37 +24,38 @@ def authenticate(usr, pswd, turn):
 
 # Login logic
 def login_to_session(user1, user2, password1, password2):
-    global logged
-    global moves
-    global turn
 
-    moves = []
-    turn = "x"
-    logged = False
+    aturn, bturn = assign_symbol()
 
+    d = {
+        'user1': user1,
+        'password1': password1,
+        'user2': user1,
+        'password2': password1
+    }
+    
+    #authenticate/register
+    if not bool(set(['']).intersection(d.values())) and user1 != user2: # Checks if all fields were filled
+        a = authenticate_or_register(user1, password1, aturn)
+        b = authenticate_or_register(user2, password2, bturn)
 
-    a, b = False, False
+    #login to session
+    if not a or not b:
+        is_loggedin = False
+    else:
+        is_loggedin = True
+        session["user1"] = {aturn: user1}
+        session["user2"] = {bturn: user2}
 
-    if request.method == 'POST':
-        creds = request.form
+    session["logged_in"] = is_loggedin
+    print(dict(session))
 
+def assign_symbol():
     if random.randint(0, 1) == 0:
         aturn = 'x'
         bturn = 'o'
     else:
         bturn = 'x'
         aturn = 'o'
-    
-    if not bool(set(['']).intersection(creds.values())) and user1 != user2: # Checks if all fields were filled
-        a = authenticate(user1, password1, aturn)
-        b = authenticate(user2, password2, bturn)
 
-    if not a or not b:
-        logged = False
-    else:
-        logged = True
-        session["user1"] = {aturn: user1}
-        session["user2"] = {bturn: user2}
-
-    session["logged_in"] = logged
-    print(dict(session))
+    return aturn, bturn

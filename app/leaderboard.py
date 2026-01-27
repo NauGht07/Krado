@@ -2,12 +2,11 @@ import csv
 from flask import jsonify
 
 def leaderboard_data():
-    f = open('data/users.csv', newline='')
-    reader = csv.reader(f)
-    l = {}
-    for i in reader:
-        l[i[0]] = i[2]
-    
-    sl = sorted(l.items(), key=lambda x:int(x[1]), reverse=True)
+    with open('data/users.csv', newline='') as f:
+        reader = csv.reader(f)
 
-    return jsonify({'result': sl})
+        scores = {i[0]: int(i[2]) for i in reader}
+        
+        sl = sorted(scores.items(), key=lambda x:int(x[1]), reverse=True)
+
+        return jsonify({'result': sl})
