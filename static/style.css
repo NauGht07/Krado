@@ -75,12 +75,22 @@ nav .left p {
     grid-template-columns: repeat(3, 1fr);
 }
 
-.board.o .cell {
-    background-color: rgb(255, 198, 208);
+.board.xWin {
+    background-image: url('cross.svg');
+    background-size: cover;
 }
 
-.board.x .cell {
-    background-color: rgb(188, 217, 243);
+.board.oWin {
+    background-image: url('circle.svg');
+    background-size: cover;
+}
+
+.board.oWin .cell {
+    opacity: 50%;
+}
+
+.board.xWin .cell {
+    opacity: 50%;
 }
 
 .grid {

@@ -1,6 +1,7 @@
-from flask import Blueprint, flash, render_template, request, redirect, session
+from flask import Blueprint, flash, render_template, request, redirect, session, jsonify
 from app.login import login_to_session
 from app.leaderboard import leaderboard_data
+from app.game_state_checks import grid_win_check
 
 main = Blueprint("main", __name__)
 
@@ -45,3 +46,12 @@ def login():
 @main.route("/leaderboard", methods=['POST'])
 def leaderboard():
     return leaderboard_data()
+
+@main.route("/clicked", methods=['POST', 'GET'])
+def clicked():
+    data = request.get_json()
+    button_id = data.get('button_id')
+    turn = data.get('turn')
+
+    result = grid_win_check(button_id, turn)
+    return jsonify(result)
