@@ -6,8 +6,7 @@ A two-player local strategy game built to explore game logic and clean backend-f
 
 
 ## About
-Krado is a browser-based two-player local multiplayer strategy game inspired by Super Tic-Tac-Toe, popularised by Vsauce. 
-The project started as a simple school assignment and evolved into a backend-focused exercise in routing, logic implementation and code organization using Flask.
+Krado is a browser-based Super Tic-Tac-Toe game inspired by Vsauce, built as a local two-player strategy game. It also features an AI opponent powered by the Minimax algorithm — exploring recursive game-tree search and server-side decision logic. What started as a school assignment evolved into a backend-focused exercise in Flask architecture, routing, and clean code organisation.
 
 > Focus: backend game logic, routing clarity, and maintainable multi-file structure.
 ## Why I built this
@@ -53,3 +52,7 @@ python main.py
 - Add AI opponents
 - Connect to an online database
 - Improve session security
+
+## Branches
+- `main` — local two-player multiplayer
+- `ai-opponent` — single player vs Minimax AI
