@@ -32,37 +32,72 @@
     async function clicked(button_id) {
         const button = document.getElementById(button_id);
         if (button.innerHTML !== "") return;
+        
+        playerid = button_id
+        aiid = ''
 
         await fetch('/clicked', {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 button_id: button_id,
-                turn: xTurn ? 'x' : 'o'
             })
         })
         .then(res => res.json())
         .then(data => {
-
-            if (data.status === "game won") {
+            player = data.first
+            ai = data.second
+            if (player.status === "game won") {
                 console.log("game won")
-                alert("GAME WON by " + data.winner);
+                alert("GAME WON by " + player.winner);
                 window.location.href = '/login'
 
                 return;
             }
 
-            if (data.status === "board won") {
-                document.getElementById(String(data.gridId)).classList.add(data.turn + "Win");
-                console.log(data.gridId, data.turn)
+            if (player.status === "board won") {
+                document.getElementById(String(player.gridId)).classList.add(player.turn + "Win");
+                console.log(player.gridId, player.turn)
             }
+
+
+
+            if (ai != null) {
+                if (ai.status === "game won") {
+                    console.log("game won")
+                    alert("GAME WON by " + player.winner);
+                    window.location.href = '/login'
+
+                    return;
+                }
+
+                if (ai.status === "board won") {
+                    document.getElementById(String(ai.gridId)).classList.add(ai.turn + "Win");
+                    console.log(ai.gridId, ai.turn)
+                }
+                
+                aiid = ai.button_id
+                document.getElementById(ai.button_id).innerHTML = opt[+!xTurn];
+                document.body.classList.toggle('oTurn');
+                document.body.classList.toggle('xTurn');
+                return
+            }
+
+            xTurn = player.turn === 'x' ? true : false;
         });
 
+        console.log(aiid)
+
         set_grid(button_id);
+    
+        if (aiid === '') {
+            set_grid(button_id);
+        }else {
+            set_grid(aiid);
+        }
         button.innerHTML = opt[+xTurn];
         document.body.classList.toggle('oTurn');
         document.body.classList.toggle('xTurn');
-        xTurn = !xTurn;
 }
 
 

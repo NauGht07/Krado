@@ -48,7 +48,16 @@ def login_to_session(user1, user2, password1, password2):
         session["user2"] = {bturn: user2}
 
     session["logged_in"] = is_loggedin
+    session['playing_ai'] = False
     print(dict(session))
+
+def create_ai_session():
+    a, b = assign_symbol()
+    session['logged_in'] = True
+    session['user1'] = {'o': 'AI'}
+    session['user2'] = {'x': 'Player'}
+    session['playing_ai'] = True
+    session['turn'] = 'x'
 
 def assign_symbol():
     if random.randint(0, 1) == 0:

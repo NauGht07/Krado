@@ -11,9 +11,12 @@ def handle_move(button_id, turn):
     game_won = False
     grid_won = False
     moves.append(str(button_id + turn)) #adds moves to moves list
+    session['moves'] = moves
+    print(moves)
 
     if (button_id[0] + 'o' in moves) or (button_id[0] + 'x' in moves): # Checks if the board is already won by a player
-        return {'status': 'already won'}
+        switch_turn(turn)
+        return {'status': 'already won', 'button_id': button_id}
 
     grid_won = grid_win_check(button_id, turn)
 
@@ -25,10 +28,19 @@ def handle_move(button_id, turn):
         if game_won:
             print(game_won)
             print(winner)
-            return {'status': 'game won', 'winner': winner}
-        return {'status': 'board won', 'gridId': button_id[0], 'turn': turn}
+            return {'status': 'game won', 'turn': turn, 'winner': winner, 'button_id': button_id}
+        switch_turn(turn)
+        return {'status': 'board won', 'gridId': button_id[0], 'turn': turn, 'button_id': button_id}
     else:
-        return{'status': 'board not won'}
+        switch_turn(turn)
+        return{'status': 'board not won', 'turn': turn, 'button_id': button_id}
+
+
+def switch_turn(turn):
+    if turn == 'x':
+        session['turn'] = 'o'
+    else:
+        session['turn'] = 'x'
 
 # Chekcs if a board has been won
 def grid_win_check(button_id, turn):
@@ -39,6 +51,7 @@ def grid_win_check(button_id, turn):
         except: continue
         if i[0] == button_id[0] and i[2] == turn:
             positions.append(int(i[1]))
+    if int(button_id[1]) not in positions: positions.append(int(button_id[1]))
     positions.sort()
 
     if has_win_pattern(positions, win_patterns):
