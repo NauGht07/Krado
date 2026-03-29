@@ -12,7 +12,6 @@ def handle_move(button_id, turn):
     grid_won = False
     moves.append(str(button_id + turn)) #adds moves to moves list
     session['moves'] = moves
-    print(moves)
 
     if (button_id[0] + 'o' in moves) or (button_id[0] + 'x' in moves): # Checks if the board is already won by a player
         switch_turn(turn)
@@ -43,7 +42,9 @@ def switch_turn(turn):
         session['turn'] = 'x'
 
 # Chekcs if a board has been won
-def grid_win_check(button_id, turn):
+def grid_win_check(button_id, turn, moves_list = None):
+    if moves_list is None:
+        moves_list = moves 
     # Gets a sorted list of all moves in the given board and then compares it with all possible win patterns
     positions = []
     for i in moves:
@@ -60,7 +61,9 @@ def grid_win_check(button_id, turn):
         return False
 
 # Checks if the game has been won
-def game_win_check():
+def game_win_check(moves_list=None):
+    if moves_list is None:
+        moves_list = moves 
     positionsx = []
     positionso = []
     for i in moves:

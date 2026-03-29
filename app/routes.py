@@ -61,6 +61,4 @@ def clicked():
         button_id = find_best_move(button_id, session['turn'])
         result_ai = handle_move(button_id, session['turn'])
 
-    print(result_ai)
-
     return jsonify(first=result, second=result_ai)
